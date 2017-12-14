@@ -1,12 +1,14 @@
 package xyz.fabiano.bigdecimal.helper.utils;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 
-public class BigDecimalOperations {
+import static xyz.fabiano.bigdecimal.helper.BigDecimalGlobalSettings.*;
 
-    private static Integer defaultScale = 10;
-    private static Integer defaultRoundMode = BigDecimal.ROUND_HALF_EVEN;
+public class BigDecimalOperations {
 
     public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
         return dividend.divide(divisor, defaultScale, defaultRoundMode);
@@ -35,11 +37,23 @@ public class BigDecimalOperations {
         return asBigDecimal(sqrt);
     }
 
-    public static BigDecimal asBigDecimal(Double value) {
-        return BigDecimal.valueOf(value).setScale(defaultScale, defaultRoundMode);
+    public static BigDecimal asBigDecimal(Number value) {
+        return standardBigDecimal(BigDecimal.valueOf(value.doubleValue()));
     }
 
-    public static BigDecimal asBigDecimal(Integer value) {
-        return BigDecimal.valueOf(value).setScale(defaultScale, defaultRoundMode);
+    public static BigDecimal asBigDecimal(BigInteger value) {
+        return standardBigDecimal(new BigDecimal(value));
+    }
+
+    public static BigDecimal asBigDecimal(BigDecimal value) {
+        return standardBigDecimal(value);
+    }
+
+    public static BigDecimal asBigDecimal(CharSequence value) {
+        return standardBigDecimal(new BigDecimal(value.toString()));
+    }
+
+    public static BigDecimal standardBigDecimal(BigDecimal bigDecimal) {
+        return bigDecimal.setScale(defaultScale, defaultRoundMode);
     }
 }

@@ -4,11 +4,57 @@ import org.junit.Test;
 import xyz.fabiano.bigdecimal.helper.utils.BigDecimalOperations;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import static xyz.fabiano.bigdecimal.helper.utils.BigDecimalOperations.*;
 import static org.junit.Assert.*;
 
 
 public class BigDecimalOperationsTest {
+
+    @Test
+    public void testLongAsBigDecimal() {
+        BigDecimal aLong = asBigDecimal(100_000_000_000L);
+        assertEquals(expectedBigDecimal(BigDecimal.valueOf(100_000_000_000L)), aLong);
+    }
+    @Test
+    public void testIntegerAsBigDecimal() {
+        BigDecimal anInteger = asBigDecimal(100_000_000);
+        assertEquals(expectedBigDecimal(BigDecimal.valueOf(100_000_000)), anInteger);
+    }
+    @Test
+    public void testFloatAsBigDecimal() {
+        BigDecimal aFloat = asBigDecimal(123123.123123F);
+        assertEquals(expectedBigDecimal(BigDecimal.valueOf(123123.123123F)), aFloat);
+    }
+
+    @Test
+    public void testDoubleAsBigDecimal() {
+        BigDecimal aDouble = asBigDecimal(432542.1231231D);
+        assertEquals(expectedBigDecimal(BigDecimal.valueOf(432542.1231231D)), aDouble);
+    }
+
+    @Test
+    public void testStringAsBigDecimal() {
+        BigDecimal aString = asBigDecimal("10000.32426321234526576723");
+        assertEquals(expectedBigDecimal(new BigDecimal("10000.32426321234526576723")), aString);
+    }
+
+    @Test
+    public void testBigIntegerAsBigDecimal() {
+        BigDecimal aBigInteger = asBigDecimal(new BigInteger("12345678910111213141516171819202122232425"));
+        assertEquals(expectedBigDecimal(new BigDecimal(new BigInteger("12345678910111213141516171819202122232425"))), aBigInteger);
+    }
+
+    @Test
+    public void testBigDecimalAsBigDecimal() {
+        BigDecimal aBigDecimal = asBigDecimal(new BigDecimal("123123123123.456456456456"));
+        assertEquals(expectedBigDecimal(new BigDecimal("123123123123.456456456456")), aBigDecimal);
+    }
+
+    private BigDecimal expectedBigDecimal(BigDecimal value) {
+        return value.setScale(BigDecimalGlobalSettings.defaultScale, BigDecimalGlobalSettings.defaultRoundMode);
+    }
 
     @Test
     public void divideBigDecimals() {
