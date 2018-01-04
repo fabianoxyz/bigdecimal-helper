@@ -1,35 +1,32 @@
 package xyz.fabiano.bigdecimal.helper.utils;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import static xyz.fabiano.bigdecimal.helper.BigDecimalGlobalSettings.*;
+import static xyz.fabiano.bigdecimal.helper.BigDecimalGlobalSettings.defaultRoundMode;
+import static xyz.fabiano.bigdecimal.helper.BigDecimalGlobalSettings.defaultScale;
 
 public class BigDecimalOperations {
 
-    public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
-        return dividend.divide(divisor, defaultScale, defaultRoundMode);
+    public static <T extends Number> BigDecimal divide(T dividend, T divisor) {
+        return asBigDecimal(dividend).divide(asBigDecimal(divisor), defaultScale, defaultRoundMode);
     }
 
-    public static BigDecimal divide(BigDecimal dividend, Integer divisor) {
-        return divide(dividend, asBigDecimal(divisor));
+    @SafeVarargs
+    public static <T extends Number> BigDecimal sum(final T... factors) {
+        BigDecimal product = bigDecimalStream(factors)
+                .reduce(BigDecimal.ONE, BigDecimal::multiply);
+        return standardBigDecimal(product);
     }
 
-    public static BigDecimal divide(Integer dividend, Integer divisor) {
-        return divide(asBigDecimal(dividend), divisor);
-    }
-
-    public static BigDecimal multiply(Integer intFactor, BigDecimal... factors) {
-        BigDecimal product = Arrays.stream(factors).reduce(BigDecimal.ONE, BigDecimal::multiply);
-        return multiply(product, intFactor);
-    }
-
-    public static BigDecimal multiply(BigDecimal factor, Integer... intFactors) {
-        Integer product = Arrays.stream(intFactors).reduce(1, (f1, f2) -> f1 * f2);
-        return factor.multiply(asBigDecimal(product)).setScale(defaultScale, defaultRoundMode);
+    @SafeVarargs
+    public static <T extends Number> BigDecimal multiply(final T... factors) {
+        BigDecimal product = Arrays.stream(factors)
+                .map(BigDecimalOperations::asBigDecimal)
+                .reduce(BigDecimal.ONE, BigDecimal::multiply);
+        return standardBigDecimal(product);
     }
 
     public static BigDecimal sqrt(BigDecimal radicand) {
@@ -37,7 +34,7 @@ public class BigDecimalOperations {
         return asBigDecimal(sqrt);
     }
 
-    public static BigDecimal asBigDecimal(Number value) {
+    public static <T extends Number> BigDecimal asBigDecimal(T value) {
         return standardBigDecimal(BigDecimal.valueOf(value.doubleValue()));
     }
 
@@ -55,5 +52,10 @@ public class BigDecimalOperations {
 
     public static BigDecimal standardBigDecimal(BigDecimal bigDecimal) {
         return bigDecimal.setScale(defaultScale, defaultRoundMode);
+    }
+
+    private static <T extends Number> Stream<BigDecimal> bigDecimalStream(T[] factors) {
+        return Arrays.stream(factors)
+                .map(BigDecimalOperations::asBigDecimal);
     }
 }

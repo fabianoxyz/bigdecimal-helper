@@ -1,5 +1,6 @@
 package xyz.fabiano.bigdecimal.helper;
 
+import org.junit.Before;
 import org.junit.Test;
 import xyz.fabiano.bigdecimal.helper.utils.BigDecimalOperations;
 
@@ -7,10 +8,16 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static xyz.fabiano.bigdecimal.helper.utils.BigDecimalOperations.*;
+import static xyz.fabiano.bigdecimal.helper.BigDecimalGlobalSettings.*;
 import static org.junit.Assert.*;
 
 
 public class BigDecimalOperationsTest {
+
+    @Before
+    public void setupLargeScale() {
+        BigDecimalGlobalSettings.defaultScale = 40;
+    }
 
     @Test
     public void testLongAsBigDecimal() {
@@ -48,12 +55,12 @@ public class BigDecimalOperationsTest {
 
     @Test
     public void testBigDecimalAsBigDecimal() {
-        BigDecimal aBigDecimal = asBigDecimal(new BigDecimal("123123123123.456456456456"));
-        assertEquals(expectedBigDecimal(new BigDecimal("123123123123.456456456456")), aBigDecimal);
+        BigDecimal aBigDecimal = asBigDecimal(new BigDecimal("123123123123.456456456456456456456456"));
+        assertEquals(expectedBigDecimal(new BigDecimal("123123123123.456456456456456456456456")), aBigDecimal);
     }
 
     private BigDecimal expectedBigDecimal(BigDecimal value) {
-        return value.setScale(BigDecimalGlobalSettings.defaultScale, BigDecimalGlobalSettings.defaultRoundMode);
+        return value.setScale(defaultScale, defaultRoundMode);
     }
 
     @Test
@@ -71,7 +78,7 @@ public class BigDecimalOperationsTest {
     @Test
     public void divideIntegers() {
         BigDecimal quotient = BigDecimalOperations.divide(1, 3);
-        assertEquals(asBigDecimal(0.333_333_333_333), quotient);
+        assertEquals(asBigDecimal("0.33333333333333333333333333333333333333333333333"), quotient);
 
         quotient = BigDecimalOperations.divide(1, 10);
         assertEquals(asBigDecimal(0.1), quotient);
@@ -83,7 +90,7 @@ public class BigDecimalOperationsTest {
     @Test
     public void divideBoth() {
         BigDecimal quotient = BigDecimalOperations.divide(BigDecimal.ONE, 3);
-        assertEquals(asBigDecimal(0.333_333_333_333), quotient);
+        assertEquals(asBigDecimal("0.33333333333333333333333333333333333333333333333"), quotient);
 
         quotient = BigDecimalOperations.divide(BigDecimal.ONE, 20);
         assertEquals(asBigDecimal(0.05), quotient);
@@ -101,9 +108,9 @@ public class BigDecimalOperationsTest {
         assertEquals(asBigDecimal(8), sqrt);
 
         sqrt = BigDecimalOperations.sqrt(asBigDecimal(2));
-        assertEquals(asBigDecimal(1.4142135624), sqrt);
+        assertEquals(asBigDecimal(1.4142135623730950488), sqrt);
 
         sqrt = BigDecimalOperations.sqrt(asBigDecimal(97));
-        assertEquals(asBigDecimal(9.8488578018), sqrt);
+        assertEquals(asBigDecimal(9.84885780179610392793), sqrt);
     }
 }
